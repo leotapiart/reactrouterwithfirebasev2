@@ -4,6 +4,7 @@ import LayoutPublic from "../layouts/LayoutPublic";
 import Dashboard from "../pages/Dashboard";
 import Home from "../pages/Home";
 import Login from "../pages/Login";
+import Register from "../pages/Register";
 
 export const root = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ export const root = createBrowserRouter([
       {
         path: "/login",
         element: <Login />,
+      },
+      {
+        path: "/register",
+        element: <Register />,
       },
       {
         path: "/dashboard",
