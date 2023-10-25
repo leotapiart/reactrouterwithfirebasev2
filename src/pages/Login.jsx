@@ -1,44 +1,52 @@
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import FormError from "../components/FormError";
+import FormInput from "../components/FormInput";
 import { useUserContext } from "../context/UserContext";
-import { useState } from "react";
+import { erroresFirebase } from "../utils/erroresFirebase";
+import { formValidate } from "../utils/formValidate";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const { setUser, loginUser } = useUserContext();
-
+  const { loginUser } = useUserContext();
   const navigate = useNavigate();
+  const { required, patternEmail, minLength, validateTrim, validateEquals } =
+    formValidate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    getValues,
+    setError,
+  } = useForm({
+    defaultValues: {
+      email: "test@test.com",
+    },
+  });
+
+  const onSubmit = async ({ email, password }) => {
     try {
-      const res = await loginUser(email, password);
-      if (res) {
-        setUser(true);
-        navigate("/");
-      }
+      await loginUser(email, password);
+      navigate("/");
     } catch (error) {
-      console.log(error.code);
+      setError("firebase", { message: erroresFirebase(error.code) });
     }
   };
 
   return (
     <>
       <h1>Login 🔐</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <FormInput
+          type="type"
           placeholder="Ingrese Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Ingrese Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          {...register("email", {
+            required,
+            pattern: patternEmail,
+          })}
         />
         <button>Iniciar Sesión</button>
+        <FormError error={errors.email} />
       </form>
     </>
   );
