@@ -1,7 +1,9 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import Button from "../components/Button";
 import FormError from "../components/FormError";
 import FormInput from "../components/FormInput";
+import Title from "../components/Title";
 import { useUserContext } from "../context/UserContext";
 import { erroresFirebase } from "../utils/erroresFirebase";
 import { formValidate } from "../utils/formValidate";
@@ -9,14 +11,12 @@ import { formValidate } from "../utils/formValidate";
 const Login = () => {
   const { loginUser } = useUserContext();
   const navigate = useNavigate();
-  const { required, patternEmail, minLength, validateTrim, validateEquals } =
-    formValidate();
+  const { required, patternEmail, minLength, validateTrim } = formValidate();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    getValues,
     setError,
   } = useForm({
     defaultValues: {
@@ -29,24 +29,39 @@ const Login = () => {
       await loginUser(email, password);
       navigate("/");
     } catch (error) {
-      setError("firebase", { message: erroresFirebase(error.code) });
+      console.log(error.code);
+      const { code, message } = erroresFirebase(error.code);
+      setError(code, { message: message });
     }
   };
 
   return (
     <>
-      <h1>Login 🔐</h1>
+      <Title text={"Login 🔐"} />
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormInput
-          type="type"
+          type="email"
+          label="Ingrese su Correo"
           placeholder="Ingrese Email"
           {...register("email", {
             required,
             pattern: patternEmail,
           })}
         />
-        <button>Iniciar Sesión</button>
+        <FormInput
+          type="password"
+          label="Ingrese su Contraseña"
+          placeholder="Ingrese Contraseña"
+          {...register("password", {
+            required,
+            minLength,
+            validate: validateTrim,
+          })}
+        />
+        <Button type="submit" text={"Iniciar Sesión"} />
         <FormError error={errors.email} />
+        <FormError error={errors.password} />
+        <FormError error={errors.firebase} />
       </form>
     </>
   );

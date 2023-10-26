@@ -5,6 +5,8 @@ import { erroresFirebase } from "../utils/erroresFirebase";
 import FormError from "../components/FormError";
 import FormInput from "../components/FormInput";
 import { formValidate } from "../utils/formValidate";
+import Title from "../components/Title";
+import Button from "../components/Button";
 
 const Register = () => {
   const { registerUser } = useUserContext();
@@ -29,22 +31,24 @@ const Register = () => {
       await registerUser(email, password);
       navigate("/");
     } catch (error) {
-      setError("firebase", { message: erroresFirebase(error.code) });
+      const { code, message } = erroresFirebase(error.code);
+      setError(code, { message: message });
     }
   };
 
   return (
     <>
-      <h1>Registro 🙋‍♂️🔑</h1>
+      <Title text={"Registro 🙋‍♂️🔑"} />
       <FormError error={errors.firebase} />
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormInput
-          type="type"
+          type="email"
           placeholder="Ingrese Email"
           {...register("email", {
             required,
             pattern: patternEmail,
           })}
+          label="Ingresa tu correo"
         />
         <FormInput
           type="password"
@@ -54,15 +58,17 @@ const Register = () => {
             minLength,
             validate: validateTrim,
           })}
+          label="Ingresa contraseña"
         />
         <FormInput
           type="password"
           placeholder="Repita su Contraseña"
           {...register("repassword", {
-            validate: validateEquals(getValues),
+            validate: validateEquals(getValues("password")),
           })}
+          label="Repita su contraseña"
         />
-        <button type="submit">Registrar</button>
+        <Button type="submit" text={"Registrarse"} />
         <FormError error={errors.email} />
         <FormError error={errors.password} />
         <FormError error={errors.repassword} />
