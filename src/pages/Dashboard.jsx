@@ -1,7 +1,9 @@
+import Title from "../components/Title";
+
 const Dashboard = () => {
   return (
     <>
-      <h1>Dashboard 📓🍎</h1>
+      <Title text="Dashboard 📓🍎" />
       <h2>Area Protegida, solo para Usuarios 👨‍💻🚫</h2>
     </>
   );

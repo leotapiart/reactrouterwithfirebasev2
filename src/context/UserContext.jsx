@@ -6,6 +6,7 @@ import {
 } from "firebase/auth";
 import { createContext, useContext, useEffect, useState } from "react";
 import { auth } from "../firebase";
+import Loading from "../components/Loading";
 
 export const UserContext = createContext();
 
@@ -23,7 +24,7 @@ const UserProvider = ({ children }) => {
     return unsuscribe;
   }, []);
 
-  if (user === false) return <p>Cargando app...</p>;
+  if (user === false) return <Loading />;
 
   return (
     <UserContext.Provider value={{ user, setUser, registerUser, loginUser, logoutUser }}>
